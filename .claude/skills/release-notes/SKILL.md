@@ -1,10 +1,12 @@
 ---
 name: release-notes
-description: Publish curated release notes for an existing Mole `V<version>` tag, including bilingual format, `gh release edit`, contributor thanks, and reactions. Use only when explicitly asked to edit or publish Mole release notes. Not for release readiness, tagging, or code review.
+description: Publish curated release notes for an existing Mole `V<version>` tag, including English-only format, `gh release edit`, contributor thanks, and reactions. Use only when explicitly asked to edit or publish Mole release notes. Not for release readiness, tagging, or code review.
 disable-model-invocation: true
 ---
 
 # Mole release notes
+
+<!-- English-only documentation adaptation for Pawly, 2026-09-14. -->
 
 This skill drives the curated-notes step that runs **after** `release.yml` has finished. The workflow creates the GitHub Release with assets but with `generate_release_notes: false`, so notes must be added in a follow-up `gh release edit` (never `gh release create`, the release already exists, and `create` will conflict).
 
@@ -49,11 +51,6 @@ Structure:
 1. **<English headline>**: <one-sentence English elaboration>.
 2. ...
 
-### 更新日志
-
-1. **<中文 headline>**：<一句中文说明>。
-2. ...
-
 ### Thanks
 
 Issue reporters and PR contributors this cycle: @handle1 · @handle2.
@@ -72,11 +69,11 @@ No `---` separators between sections, and no trailing repository link; the publi
 - **No sponsor list by default**. The current public release style thanks issue reporters and PR contributors for this cycle only.
 - **No emoji except the version emoji in the release title**. Body section headers stay plain, including `### Thanks` (the old `Thanks 💖` header is gone from the published pages).
 - **No inline PR refs, no inline `@handle` thanks**. PRs and people belong in the dedicated Thanks block only.
-- **English block first, 中文 block second**. Same numbered order in both blocks. Same number of items.
+- **Use a single English changelog block**. All published release documentation in this fork must be in English.
 - **Order items by user-perceived impact, not commit chronology**. Headline change first; internal safety hardening, performance, and bug fixes follow.
 - **Do not describe overview icons that no longer exist**. Analyze overview rows are text-only because emoji width and baselines vary across terminals. If icons return later, they must not imply that user data such as iOS Backups, Xcode Archives, or Old Downloads is safe to delete.
 - **Verify every command mentioned in the notes actually exists in HEAD**. The deleted `mo check` / `mo doctor` commands nearly shipped in notes as a "feature" after they were removed.
-- **An incident or troubleshooting note is one sentence of symptom plus one command**. No cause taxonomy, no command per branch; the user needs the one line that gets them unstuck. Match the previous release's language treatment for that note: if the last release carried it in one language, do not add a second.
+- **An incident or troubleshooting note is one sentence of symptom plus one command**. No cause taxonomy, no command per branch; the user needs the one line that gets them unstuck. Write it in English without a duplicate translation.
 - **Keep the Mole Mac App cross-link to one restrained, fact-backed paragraph**. Validate the product scope, price, updates, refund window, and download URL against the current homepage before publishing.
 
 ## Publish
@@ -104,7 +101,7 @@ This skill is user-invocable only. It must not run unprompted:
 
 - If the user mentions release notes in passing, draft only; do not call `gh release edit`.
 - If `gh release view` shows the release does not exist yet, wait for the workflow; do not create a competing release manually.
-- If the user has not given an explicit "publish" / "提交" signal, stop after the draft.
+- If the user has not given an explicit "publish" / "submit" signal, stop after the draft.
 
 ## Helper script
 

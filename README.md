@@ -2,7 +2,7 @@
   <img src="macos/Sources/Pawly/Resources/mascot.png" alt="Pawly kitten sweeping" width="180">
   <h1>Pawly</h1>
   <p>A little cat to help tidy your Mac.</p>
-  <p>免費開源的 macOS 清理介面 · 繁體中文 / English</p>
+  <p>Free, open-source macOS cleanup interface · Traditional Chinese / English</p>
   <p><a href="https://github.com/bu56co-del/cleaner/releases/tag/pawly-v1.2.0">Download Pawly 1.2</a> · <a href="docs/pawly/BUILDING.md">Build from source</a> · <a href="LICENSE">GPL-3.0</a></p>
 </div>
 
@@ -70,15 +70,6 @@ open dist/Pawly.app
 The helper finds Go on your PATH, or uses a local toolchain if you already have one.
 There is no bundled developer toolchain in this repository.
 See [BUILDING.md](docs/pawly/BUILDING.md) for details and verification commands.
-
-## 繁體中文
-
-Pawly 係免費開源嘅貓咪風格 Mac 清理介面。先掃描同檢視，再決定清理項目；
-部分操作會保留原引擎嘅選單及最後確認，支援鍵盤同畫面按鈕。
-
-目前下載版支援 Apple Silicon、macOS 14 或以上，未有 Apple 公證。
-安裝方法、原始碼及校驗檔均放喺上面嘅 GitHub Release。
-快速整理及安裝檔使用垃圾桶；專案產物及部分深層清理會永久刪除，請先細看確認畫面。
 
 ## License and credits
 

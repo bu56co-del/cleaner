@@ -1,60 +1,87 @@
-# Pawly — Mac 的貓咪小管家
+# Pawly — A little cat to help tidy your Mac
 
-Pawly 1.2 是獨立的 macOS 貓咪風格介面，使用這個 repository 的 Mole 1.53.0 引擎。
-支援繁體中文／English，以及奶油淺色／深色／跟隨系統外觀。
+Pawly 1.2 is an independent, cat-themed macOS interface using the Mole 1.53.0
+engine in this repository. The app supports Traditional Chinese and English,
+with cream, dark and system appearance options.
 
-## 開啟
+## Download and launch
 
-下載版見 [GitHub Releases](https://github.com/bu56co-del/cleaner/releases/tag/pawly-v1.2.0)。目前提供 Apple Silicon 版本，macOS 14+。本機編譯後可雙擊 `dist/Pawly.app`。已內附 Swift、Go 引擎及插畫資源，使用時不需要開啟 Terminal。
+Download the app from [GitHub Releases](https://github.com/bu56co-del/cleaner/releases/tag/pawly-v1.2.0).
+The current download supports Apple Silicon and macOS 14 or newer. For a local
+build, double-click `dist/Pawly.app`. The bundle includes the native Swift app,
+Go engine helpers and artwork; using the app does not require a separate Terminal window.
 
-重新編譯並開啟：
+To rebuild and launch:
 
 ```bash
 ./script/build_and_run.sh
 ```
 
-只編譯：`./script/build_and_run.sh --build`。預設使用速度優化的 release 編譯；`--debug` 保留除錯模式。
-當 App 正在清理時，可用 `--stage` 先建立獨立更新包，不替換使用中的資源。建置需要 macOS 14+、Swift 6 工具鏈；
-腳本可使用 PATH 上的 Go，或已存在的專案內工具鏈；完整步驟見 [BUILDING.md](docs/pawly/BUILDING.md)。SwiftTerm 1.20.0 與其資源、MIT 授權一併打包。
-下載版使用 ad-hoc 簽署，未有 Developer ID 簽署或 Apple 公證；首次開啟可能被 macOS 阻擋，見 [Apple 開啟指引](https://support.apple.com/en-us/102445)。
+To build without launching, use `./script/build_and_run.sh --build`. The default
+build enables release optimization; `--debug` retains the debugging configuration.
+Use `--stage` to prepare a separate bundle while the current app is cleaning,
+without replacing resources that an operation is using.
 
-## 1.2 介面更新
+Building requires macOS, a Swift 6 toolchain, Python 3 and a compatible Go version.
+The build script can use Go on PATH or an existing project-local toolchain.
+See [BUILDING.md](docs/pawly/BUILDING.md) for the complete requirements and steps.
+SwiftTerm 1.20.0 is bundled with its resources and MIT license.
 
-- 操作工作台開啟時自動取得鍵盤焦點；點入畫面或按過控制按鈕後，可繼續用方向鍵、Enter、Esc 及文字輸入。
-- 精簡標題、側欄和重複標語，保留貓咪風格；健康詳情按開才建立畫面。
-- 清理／專案清單使用原生分組列表；分類、搜尋及排序只在資料改變時重算。App 圖示延後載入並重用。
-- 磁碟列表改用清楚的名稱和大小，移除每一行獨立計算的比例圖。
+The download is ad-hoc signed, without Developer ID signing or Apple notarization.
+macOS may block the first launch; see [Apple's opening guidance](https://support.apple.com/en-us/102445).
 
-## 功能
+## Interface changes in 1.2
 
-| 畫面 | 功能 |
+- The operation workspace acquires keyboard focus when opened. Arrow keys, Enter,
+  Escape and text input continue to work after clicking the console or its controls.
+- Headings, the sidebar and repeated slogans are simplified while retaining the
+  cat theme. Health details are created when expanded.
+- Cleanup and project screens use native grouped lists. Categories, search results
+  and sorting are recalculated when their inputs change. App icons load lazily and are reused.
+- Disk rows show clear names and sizes without a separately calculated ratio chart in every row.
+
+## Features
+
+| Screen | Capabilities |
 | --- | --- |
-| 快速整理 | 快取、舊記錄及舊安裝檔；逐項檢查並移到垃圾桶 |
-| 深層清理 | Mole 完整掃描；按分類檢視路徑及大小；保留清單；外置磁碟清理 |
-| 應用程式 | 已安裝 App 搜尋、大小、來源、相關檔案與共用資料檢查；確認移除 |
-| 開發專案 | 專案探索、指定範圍、產物大小與活動、逐項勾選、原生確認與整理 |
-| 安裝檔 | 完整引擎的來源及格式清單、篩選、多選、檢查、移到垃圾桶 |
-| 系統維護 | 21 項原引擎工作、逐項預覽、排除設定、所選工作執行 |
-| 空間探索 | 磁碟概覽、資料夾逐層探索、大小排序、搜尋、大型檔案及 Finder 顯示 |
-| 健康狀態 | 即時 CPU／記憶體、硬件、磁碟、網絡、電源與程序資料；不可用資料保留為未知 |
-| 清理紀錄 | Pawly 操作紀錄及 Mole 操作／檔案處理紀錄 |
-| 工具與設定 | 保留清單、專案位置、Touch ID、自動補全、獨立 Mole CLI 版本／更新／移除 |
+| Quick cleanup | Review caches, old logs and old installers; move selected items to Trash |
+| Deep clean | Full Mole scan, paths and sizes by category, exclusions and external volumes |
+| Applications | Search installed apps; review size, source, related files and shared data before uninstalling |
+| Projects | Discover projects, choose a scan scope, review artifact size and activity, select and confirm cleanup |
+| Installers | Filter the engine's installer inventory by source and format, select files, review and move them to Trash |
+| Maintenance | Preview and select from 21 engine tasks, manage exclusions and execute the selected tasks |
+| Disk explorer | Disk overview, folder drill-down, size sorting, search, large files and Show in Finder |
+| Health | Live CPU, memory, hardware, disk, network, power and process information; unavailable values remain unknown |
+| History | Pawly operation history and Mole operation/file-handling records |
+| Tools and settings | Exclusions, project locations, Touch ID, shell completion and management of a separately installed Mole CLI |
 
-清單、搜尋、預覽及主要整理操作採用原生 macOS 介面。深層清理／App 移除的最終
-執行、需要授權的維護、磁碟多選與 Trash、設定工具，會在 App 內顯示原引擎互動畫面；
-可用畫面按鈕或鍵盤操作。這保留了 Mole 原本的檢查、選擇及授權流程。
+Lists, search, previews and primary cleanup controls use native macOS views.
+Final deep cleanup and app uninstall, privileged maintenance, disk multi-selection
+and Trash operations, and some settings use the original engine's interactive
+screen inside Pawly. Both on-screen controls and keyboard input are supported.
+This preserves Mole's existing checks, selection and authorization steps.
 
-快速整理與安裝檔使用垃圾桶；專案產物清理是永久移除。完整深層清理包含永久移除
-及清空垃圾桶，執行前會明確說明。預覽數字是量度到的資料大小，不代表 APFS 即時
-可釋放的實體空間。更新指令版需要網絡；它只作用於另外安裝的 CLI，不會修改 Pawly
-內附引擎。沒有獨立 CLI 時，相應管理按鈕不會出現。
+Quick cleanup and installer removal use Trash. Project-artifact cleanup removes
+files permanently. Full deep cleanup includes permanent removal and emptying
+Trash, with the behavior explained before execution. Preview sizes represent
+measured logical data, not a promise of immediately reclaimable physical APFS space.
 
-Command-R 掃描快速整理，Command-O 探索資料夾。外觀／語言在「偏好設定」。
+CLI updates require network access and affect only the separately installed CLI,
+not the engine bundled with Pawly. CLI management controls are hidden when no
+separate installation is available.
 
-## 驗證與授權
+Use Command-R for a quick-cleanup scan and Command-O to explore a folder.
+Appearance and language controls are in Settings.
 
-目前狀態及已驗證範圍見 [FULL_FEATURES.md](docs/pawly/FULL_FEATURES.md)。
-驗證集中於介面接駁、暫存測試資料及本機操作；未完成所有平台或所有實際清理流程的驗收。詳細界線見驗證文件。
+## Verification and license
 
-Mole: GPL-3.0，見 LICENSE。SwiftTerm: MIT。Pawly 使用自己名稱、圖示及插畫，
-並非官方 Mole Mac app。上游授權及商標聲明隨 app 附上。Pawly 整體依 GPL-3.0 發佈，並無任何保證；詳見 [NOTICE.md](NOTICE.md)。
+See [FULL_FEATURES.md](docs/pawly/FULL_FEATURES.md) for feature coverage and
+[VERIFICATION.md](docs/pawly/VERIFICATION.md) for the verification scope.
+Checks focus on interface integration, temporary fixtures and local interactions;
+not every platform or real cleanup workflow has been verified.
+
+Mole is licensed under GPL-3.0; see [LICENSE](LICENSE). SwiftTerm uses the MIT
+license. Pawly uses its own name, icon and artwork and is not the official Mole
+Mac app. Upstream license and trademark notices are included in the app.
+Pawly as a whole is distributed under GPL-3.0, without warranty;
+see [NOTICE.md](NOTICE.md).
