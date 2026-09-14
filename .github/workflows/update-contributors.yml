@@ -13,6 +13,8 @@ concurrency:
 
 jobs:
   update-contributors:
+    # Pawly fork: upstream-only automation (modified 2026-09-14).
+    if: github.repository == 'tw93/Mole'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:

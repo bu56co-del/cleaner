@@ -10,6 +10,8 @@ permissions:
 
 jobs:
   build:
+    # Pawly fork: upstream-only automation (modified 2026-09-14).
+    if: github.repository == 'tw93/Mole'
     name: Build
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -68,6 +70,8 @@ jobs:
           retention-days: 1
 
   release:
+    # Pawly fork: upstream-only automation (modified 2026-09-14).
+    if: github.repository == 'tw93/Mole'
     name: Publish Release
     needs: build
     runs-on: ubuntu-latest
@@ -118,6 +122,7 @@ jobs:
           prerelease: false
 
   update-homebrew-core:
+    if: github.repository == 'tw93/Mole'
     name: Update Homebrew Core
     runs-on: ubuntu-latest
     timeout-minutes: 15

@@ -87,3 +87,12 @@ coverage.html
 session.json
 run_tests.ps1
 mole_guidelines.md
+
+# Pawly native macOS GUI outputs
+/dist/
+/macos/.build/
+/macos/.swiftpm/
+/.codex/
+__pycache__/
+# Local planning history; public status lives in docs/pawly/VERIFICATION.md.
+/docs/pawly/WORK_LOG.md

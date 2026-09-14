@@ -1,4 +1,5 @@
 #!/bin/bash
+# Modified for Pawly on 2026-09-14; see NOTICE.md for scope and upstream attribution.
 # Mole - Installer command
 # Find and remove installer files - .dmg, .pkg, .mpkg, .iso, .xip, .zip
 
@@ -861,6 +862,6 @@ main() {
 }
 
 # Only run main if not in test mode
-if [[ "${MOLE_TEST_MODE:-0}" != "1" ]]; then
+if [[ "${BASH_SOURCE[0]}" == "$0" && "${MOLE_TEST_MODE:-0}" != "1" ]]; then
     main "$@"
 fi

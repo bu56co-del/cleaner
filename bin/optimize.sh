@@ -1,4 +1,5 @@
 #!/bin/bash
+# Modified for Pawly on 2026-09-14; see NOTICE.md for scope and upstream attribution.
 # Mole - Optimize command.
 # Runs system maintenance tasks.
 # Supports dry-run where applicable.
@@ -218,6 +219,30 @@ main() {
         esac
     done
 
+    optimize_run_pass "${MOLE_OPTIMIZE_ACTIONS[@]}"
+}
+
+# Shared CLI / native-app pass. Validate the complete selection before probes,
+# logging or authorization; the public CLI still runs the full catalog.
+optimize_run_pass() {
+    [[ $# -gt 0 ]] || {
+        echo "No maintenance tasks selected" >&2
+        return 2
+    }
+    local selected_action seen="|"
+    for selected_action in "$@"; do
+        optimize_catalog_index_for "$selected_action" > /dev/null || {
+            echo "Unknown maintenance task: $selected_action" >&2
+            return 2
+        }
+        [[ "$seen" != *"|$selected_action|"* ]] || {
+            echo "Duplicate maintenance task: $selected_action" >&2
+            return 2
+        }
+        seen+="$selected_action|"
+    done
+    export MOLE_CURRENT_COMMAND="optimize"
+    local health_json
     log_operation_session_start "optimize"
 
     trap 'cleanup_all "$?"' EXIT
@@ -298,15 +323,14 @@ main() {
 
     export FIRST_ACTION=true
     optimize_outcomes_reset
-    local index action health_name
-    for ((index = 0; index < ${#MOLE_OPTIMIZE_ACTIONS[@]}; index++)); do
-        action=${MOLE_OPTIMIZE_ACTIONS[$index]}
-        health_name=${MOLE_OPTIMIZE_HEALTH_NAMES[$index]}
+    local action health_name
+    for action in "$@"; do
+        health_name=$(optimize_catalog_health_name_for "$action")
         announce_action "$health_name"
         execute_optimization "$action"
     done
 
-    if [[ "$(optimize_outcome_total)" -ne ${#MOLE_OPTIMIZE_ACTIONS[@]} ]]; then
+    if [[ "$(optimize_outcome_total)" -ne $# ]]; then
         log_error "Optimize task outcomes are incomplete"
         return 1
     fi
@@ -317,4 +341,6 @@ main() {
     optimize_outcomes_succeeded
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi

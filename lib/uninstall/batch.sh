@@ -1,4 +1,5 @@
 #!/bin/bash
+# Modified for Pawly on 2026-09-14; see NOTICE.md for scope and upstream attribution.
 
 set -euo pipefail
 
@@ -2518,6 +2519,12 @@ _batch_render_summary() {
 # shared state, the SIGINT/SIGTERM trap, sudo keepalive, and the deferred
 # Dock / LaunchServices refresh.
 batch_uninstall_applications() {
+    local native_review=false
+    if [[ $# -gt 0 ]]; then
+        [[ $# -eq 1 && "$1" == "--review" && "${MOLE_DRY_RUN:-0}" == "1" ]] || return 2
+        declare -F mole_uninstall_review_emit > /dev/null || return 2
+        native_review=true
+    fi
     local total_size_freed=0
 
     # shellcheck disable=SC2154
@@ -2599,6 +2606,13 @@ batch_uninstall_applications() {
     if [[ ${#app_details[@]} -eq 0 ]]; then
         _abort_uninstall_batch
         return 1
+    fi
+
+    if [[ "$native_review" == true ]]; then
+        local emit_rc=0
+        mole_uninstall_review_emit || emit_rc=$?
+        _abort_uninstall_batch
+        return "$emit_rc"
     fi
 
     local _confirm_rc=0

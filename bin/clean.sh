@@ -1,4 +1,5 @@
 #!/bin/bash
+# Modified for Pawly on 2026-09-14; see NOTICE.md for scope and upstream attribution.
 # Mole - Clean command.
 # Runs cleanup modules with optional sudo.
 # Supports dry-run and whitelist.
@@ -593,6 +594,11 @@ start_section() {
 
 end_section() {
     stop_section_spinner
+    # Optional read-only GUI observer. Slow later sections must not hide the
+    # completed preview rows; the observer never selects or removes anything.
+    if [[ "$DRY_RUN" == true ]] && declare -F mole_clean_preview_checkpoint > /dev/null; then
+        mole_clean_preview_checkpoint || true
+    fi
 
     if [[ "${TRACK_SECTION:-0}" == "1" && "${SECTION_ACTIVITY:-0}" == "0" ]]; then
         # On an interactive ANSI terminal, leave the header on screen and let

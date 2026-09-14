@@ -19,6 +19,8 @@ concurrency:
 
 jobs:
   audit:
+    # Pawly fork: upstream-only automation (modified 2026-09-14).
+    if: github.repository == 'tw93/Mole'
     name: Bundle drift
     runs-on: macos-latest
     timeout-minutes: 15

@@ -1,4 +1,5 @@
 #!/bin/bash
+# Modified for Pawly on 2026-09-14; see NOTICE.md for scope and upstream attribution.
 # Project Purge Module (mo purge).
 # Removes heavy project build artifacts and dependencies.
 set -euo pipefail
@@ -246,8 +247,8 @@ load_purge_config() {
 
         if [[ ${#discovered[@]} -gt 0 ]]; then
             PURGE_SEARCH_PATHS=("${discovered[@]}")
-            if [[ $PURGE_DISCOVERY_STATUS -ne 0 ]]; then
-                : # A partial inventory must not become the next run's saved scope.
+            if [[ $PURGE_DISCOVERY_STATUS -ne 0 || "${MOLE_DRY_RUN:-0}" == "1" ]]; then
+                : # Partial inventories and read-only previews never save discovered roots.
             elif save_discovered_paths "${discovered[@]}"; then
                 if [[ -t 1 ]] && [[ -z "${_PURGE_DISCOVERY_SILENT:-}" ]]; then
                     echo -e "${GRAY}Found ${#discovered[@]} project directories, saved to config${NC}" >&2
@@ -261,8 +262,16 @@ load_purge_config() {
     fi
 }
 
-# Initialize paths on script load.
-load_purge_config
+# A programmatic caller may supply its already chosen scan root while sourcing
+# this module, avoiding unrelated automatic discovery. The public purge CLI
+# continues to use load_purge_config and does not accept this internal argument.
+if [[ $# -eq 2 && "${1:-}" == "--scan-root" ]]; then
+    [[ "$2" == /* && -d "$2" && ! -L "$2" ]] || return 2
+    PURGE_SEARCH_PATHS=("$2")
+    PURGE_DISCOVERY_STATUS=0
+else
+    load_purge_config
+fi
 
 format_purge_target_path() {
     local path="$1"
@@ -1630,6 +1639,27 @@ confirm_purge_cleanup() {
 # work to failure. Signals and deletion-phase timeouts stop the run immediately.
 # PURGE_RUN_OUTCOME: completed, incomplete, no_candidates, cancelled, scan_failed.
 clean_project_artifacts() {
+    # Internal native consumers. No public CLI flag or extra deletion path:
+    # expose the prepared rows, or bind a reviewed selection to that same plan.
+    local review_only=false
+    local reviewed_selection=false
+    if [[ $# -gt 0 ]]; then
+        [[ $# -eq 1 ]] || return 2
+        case "$1" in
+            --review)
+                [[ "${MOLE_DRY_RUN:-0}" == "1" ]] || return 2
+                review_only=true
+                declare -F mole_purge_review_emit > /dev/null || return 2
+                ;;
+            --reviewed-selection)
+                # Internal native consumer must match the entire approved set
+                # against the freshly prepared plan before any sink is reached.
+                reviewed_selection=true
+                declare -F mole_purge_select_reviewed > /dev/null || return 2
+                ;;
+            *) return 2 ;;
+        esac
+    fi
     PURGE_RUN_OUTCOME="completed"
     [[ ${PURGE_DISCOVERY_STATUS:-0} -eq 0 ]] || PURGE_RUN_OUTCOME="incomplete"
     PURGE_UNKNOWN_SIZE_COUNT=0
@@ -2423,6 +2453,12 @@ clean_project_artifacts() {
         printf '\n'
         return 0
     fi
+    if [[ "$review_only" == true ]]; then
+        # Bash dynamic scope exposes only this completed, identity-bound plan.
+        # The read-only bridge supplies the serializer; it cannot reach a sink.
+        mole_purge_review_emit
+        return 0
+    fi
     # Set global vars for selector
     export PURGE_CATEGORY_SIZES=$(
         IFS=,
@@ -2442,7 +2478,12 @@ clean_project_artifacts() {
     PURGE_CATEGORY_PROJECT_IDS_ARRAY=("${item_project_identities[@]}")
     PURGE_CATEGORY_PROJECT_PATHS_ARRAY=("${item_project_paths[@]}")
     PURGE_CATEGORY_SIZE_UNKNOWN_FLAGS_ARRAY=("${item_size_unknown_flags[@]}")
-    if [[ -t 0 ]]; then
+    if [[ "$reviewed_selection" == true ]]; then
+        if ! mole_purge_select_reviewed; then
+            PURGE_RUN_OUTCOME="cancelled"
+            return 1
+        fi
+    elif [[ -t 0 ]]; then
         if ! select_purge_categories "${menu_options[@]}"; then
             PURGE_CATEGORY_FULL_PATHS_ARRAY=()
             PURGE_CATEGORY_PROJECT_IDS_ARRAY=()

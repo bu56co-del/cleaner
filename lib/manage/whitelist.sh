@@ -1,4 +1,5 @@
 #!/bin/bash
+# Modified for Pawly on 2026-09-14; see NOTICE.md for scope and upstream attribution.
 # Whitelist management functionality
 # Shows actual files that would be deleted by dry-run
 
@@ -273,8 +274,8 @@ load_whitelist() {
             WHITELIST_PATTERNS=()
         fi
 
-        # Migrate legacy optimize config to the new path automatically
-        if [[ "$mode" == "optimize" && "$using_legacy" == "true" && "$config_file" != "$WHITELIST_CONFIG_OPTIMIZE" ]]; then
+        # Migrate only during a real operation; read-only previews retain the legacy file.
+        if [[ "$mode" == "optimize" && "$using_legacy" == "true" && "$config_file" != "$WHITELIST_CONFIG_OPTIMIZE" && "${MOLE_DRY_RUN:-0}" != "1" ]]; then
             if [[ ${#CURRENT_WHITELIST_PATTERNS[@]} -gt 0 ]]; then
                 save_whitelist_patterns "$mode" "${CURRENT_WHITELIST_PATTERNS[@]}"
             else
